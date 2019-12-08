@@ -73,6 +73,7 @@ try
     mov = VideoReader(fullfile([avipath,filesep,aviname]));
 catch
     disp('! 打开视频失败, 程序退出...')
+    return
 end
 counter = 1;
 while 1
@@ -103,7 +104,9 @@ while 1
         break
     end
 end
-imgname =  [imgprefix,'splice.jpg'];
-imwrite(imgspl,imgname,'jpg')
+if strcmp(options.splice,'on')
+    imgname =  [imgprefix,'splice.jpg'];
+    imwrite(imgspl,imgname,'jpg')
+end
 
 end

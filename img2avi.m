@@ -1,24 +1,22 @@
-function [] = img2gif(imgpath,imgname,gifname,delay)
-%IMG2GIF 将多张图片拼接成GIF动图
+function [] = img2avi(imgpath,imgname,aviname)
+%IMG2AVI 将多张图片制成动画
 %   调用说明:
-%       IMG2GIF(imgpath,imgname,gifname,delay)
+%       IMG2AVI(imgpath,imgname,gifname,delay)
 %
-%   功能描述: 将多张图片拼接成GIF动图
+%   功能描述: 将多张图片制成动画
 %
 %   参数说明:
 %       输入参数:
 %           imgpath: 图片路径
 %           imgname: 多张图片的名称
 %               取值为字符串元胞数据, 如{'img-1.jpg';'img-2.jpg';'img-3.jpg'}
-%           gifname: 输出的GIF图片名称
-%           delay: GIF中两帧图片之间的时间延迟, 帧率=1/时间延迟
+%           aviname: 输出的视频名称
 %       输出参数:
 %           无
 %
 %   作者: 张晨星
-%   时间: 2019年7月11日
+%   时间: 2019年10月28日
 
-%%
 %%
 switch nargin
     case 0
@@ -53,8 +51,7 @@ switch nargin
             disp('! 指定文件夹下不含图片, 程序退出...')
             return
         end
-        gifname = 'DefaultGifFileName.gif';
-        delay = 0.4;
+        aviname = 'DefaultGifFileName.avi';
     case 1
         pathinfo = dir(imgpath);
         imgname = {};
@@ -82,35 +79,21 @@ switch nargin
             disp('! 指定文件夹下不含图片, 程序退出...')
             return
         end
-        gifname = 'DefaultGifFileName.gif';
-        delay = 0.4;
+        aviname = 'DefaultGifFileName.avi';
     case 2
-        gifname = 'DefaultGifFileName.gif';
-        delay = 0.02;
-    case 3
-        delay = 0.02;
+        aviname = 'DefaultGifFileName.avi';
 end
 
 %%
 %-------------------------------------主程序--------------------------------------%
-%循环生成gif
+%生成视频
+avi = VideoWriter(aviname, 'Motion JPEG AVI');
+open(avi);
 for n = 1:length(imgname)
     %读取图片
     im = imread(fullfile(imgpath,filesep,imgname{n}));
-    if size(im,3) == 1
-        tmp(:,:,1) = im;
-        tmp(:,:,2) = im;
-        tmp(:,:,3) = im;
-        im = tmp;
-    end
-    [I,map] = rgb2ind(im,256);
-    %写入gif
-    if exist(gifname,'file')
-        imwrite(I,map,gifname,'gif','WriteMode','append','DelayTime',delay)
-    else
-        imwrite(I,map,gifname,'gif','LoopCount',inf,'DelayTime',delay)
-    end
+    writeVideo(avi,im);
 end
-%显示生成的gif
-winopen(gifname)
+close(avi);
+
 end
